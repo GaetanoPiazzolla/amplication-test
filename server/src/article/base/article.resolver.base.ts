@@ -17,8 +17,7 @@ import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
 import * as gqlACGuard from "../../auth/gqlAC.guard";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
-import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
-import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { Public } from "../../decorators/public.decorator";
 import { CreateArticleArgs } from "./CreateArticleArgs";
 import { UpdateArticleArgs } from "./UpdateArticleArgs";
 import { DeleteArticleArgs } from "./DeleteArticleArgs";
@@ -35,12 +34,8 @@ export class ArticleResolverBase {
     protected readonly rolesBuilder: nestAccessControl.RolesBuilder
   ) {}
 
+  @Public()
   @graphql.Query(() => MetaQueryPayload)
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "read",
-    possession: "any",
-  })
   async _articlesMeta(
     @graphql.Args() args: ArticleFindManyArgs
   ): Promise<MetaQueryPayload> {
@@ -54,26 +49,16 @@ export class ArticleResolverBase {
     };
   }
 
-  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @Public()
   @graphql.Query(() => [Article])
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "read",
-    possession: "any",
-  })
   async articles(
     @graphql.Args() args: ArticleFindManyArgs
   ): Promise<Article[]> {
     return this.service.findMany(args);
   }
 
-  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @Public()
   @graphql.Query(() => Article, { nullable: true })
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "read",
-    possession: "own",
-  })
   async article(
     @graphql.Args() args: ArticleFindUniqueArgs
   ): Promise<Article | null> {
@@ -84,13 +69,8 @@ export class ArticleResolverBase {
     return result;
   }
 
-  @common.UseInterceptors(AclValidateRequestInterceptor)
+  @Public()
   @graphql.Mutation(() => Article)
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "create",
-    possession: "any",
-  })
   async createArticle(
     @graphql.Args() args: CreateArticleArgs
   ): Promise<Article> {
@@ -100,13 +80,8 @@ export class ArticleResolverBase {
     });
   }
 
-  @common.UseInterceptors(AclValidateRequestInterceptor)
+  @Public()
   @graphql.Mutation(() => Article)
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "update",
-    possession: "any",
-  })
   async updateArticle(
     @graphql.Args() args: UpdateArticleArgs
   ): Promise<Article | null> {
@@ -125,12 +100,8 @@ export class ArticleResolverBase {
     }
   }
 
+  @Public()
   @graphql.Mutation(() => Article)
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "delete",
-    possession: "any",
-  })
   async deleteArticle(
     @graphql.Args() args: DeleteArticleArgs
   ): Promise<Article | null> {
