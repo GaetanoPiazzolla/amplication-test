@@ -17,3 +17,11 @@ model User {
   updatedAt DateTime @updatedAt
   username  String   @unique
 }
+
+model Article {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  text      String?
+  title     String?
+  updatedAt DateTime @updatedAt
+}
