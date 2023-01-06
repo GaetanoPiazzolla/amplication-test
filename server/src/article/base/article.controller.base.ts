@@ -19,8 +19,7 @@ import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
 import { ArticleService } from "../article.service";
-import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
-import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { Public } from "../../decorators/public.decorator";
 import { ArticleCreateInput } from "./ArticleCreateInput";
 import { ArticleWhereInput } from "./ArticleWhereInput";
 import { ArticleWhereUniqueInput } from "./ArticleWhereUniqueInput";
@@ -35,12 +34,7 @@ export class ArticleControllerBase {
     protected readonly rolesBuilder: nestAccessControl.RolesBuilder
   ) {}
 
-  @common.UseInterceptors(AclValidateRequestInterceptor)
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "create",
-    possession: "any",
-  })
+  @Public()
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Article })
   @swagger.ApiForbiddenResponse({ type: errors.ForbiddenException })
@@ -57,12 +51,7 @@ export class ArticleControllerBase {
     });
   }
 
-  @common.UseInterceptors(AclFilterResponseInterceptor)
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "read",
-    possession: "any",
-  })
+  @Public()
   @common.Get()
   @swagger.ApiOkResponse({ type: [Article] })
   @swagger.ApiForbiddenResponse()
@@ -81,12 +70,7 @@ export class ArticleControllerBase {
     });
   }
 
-  @common.UseInterceptors(AclFilterResponseInterceptor)
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "read",
-    possession: "own",
-  })
+  @Public()
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Article })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
@@ -112,12 +96,7 @@ export class ArticleControllerBase {
     return result;
   }
 
-  @common.UseInterceptors(AclValidateRequestInterceptor)
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "update",
-    possession: "any",
-  })
+  @Public()
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Article })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
@@ -148,11 +127,7 @@ export class ArticleControllerBase {
     }
   }
 
-  @nestAccessControl.UseRoles({
-    resource: "Article",
-    action: "delete",
-    possession: "any",
-  })
+  @Public()
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Article })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
